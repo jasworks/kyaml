@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: glusterfs-cluster
+# IP address must the glusterfs cluster
+subsets:
+- addresses:
+  - ip: 192.168.xxx.yyy 
+  ports:
+  - port: 1
+- addresses:
+  - ip: 192.168.xxx.zzz
+  ports:
+  - port: 1
+- addresses:
+  - ip: 192.168.xxx.aaa
+  ports:
+  - port: 1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: glusterfs-cluster  # Must be the same as the name of the Endpoints
+spec:
+  ports:
+  - port: 1

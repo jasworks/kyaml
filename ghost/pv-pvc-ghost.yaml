@@ -1,0 +1,30 @@
+# This defines the PV and PVC together, to make the example more simple
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-gl-ghost
+spec:
+  capacity:
+    storage: 1G
+  accessModes:
+    - ReadWriteMany
+# The following example use GlusterFS, you can also use NFS with different
+# configurations
+  glusterfs:
+    endpoints: glusterfs-cluster
+    path: "/ghost"
+    readOnly: false
+  persistentVolumeReclaimPolicy: Retain
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-gl-ghost
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  volumeName: pv-gl-ghost
+  resources:
+    requests:
+      storage: 1G

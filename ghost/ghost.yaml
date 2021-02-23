@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ghost
+  labels:
+    app: ghost
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ghost
+  template:
+    metadata:
+      labels:
+        app: ghost
+    spec:
+      securityContext:
+# The UID and GID does not need to be created in the relevant nodes / pods. You just
+# to ensure that the UID/GID has permission to write on the persistent volume
+        runAsUser: <uidOfGhostUser>
+        runAsGroup: <gidOfGhostUser>
+# In this example, we use a GlusterFS volume to provide a 3-way redundency to
+# the storage of the contents. 
+# The volume name (data below) musht match with the volumeMounts.data field below
+# The claim name must be the same as defined by the PVC in example file
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: pvc-gl-ghost
+# Pull the docker image for ghost, tagged latest and we always pull a new one to
+# ensure we can upgrade properly. If you change to "IfNotPresent" then it will
+# only pull when the image does not exist in that node. It will make restart
+# faster
+      containers:
+      - name: ghost
+        image: ghost:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 2368
+# The URL provided to Ghost configuration
+# Note the https - this is to ensure that ghost will do redirection if the URL
+# is not https
+        env:
+        - name: url
+          value: https://www.example.com
+# In the Ghost docker file, it only requires 1 persistent volume which should
+# be mounted to /var/lib/ghost/content path in the image.
+        volumeMounts:
+        - mountPath: "/var/lib/ghost/content"
+          name: data
+# The following defines how the control pane consider the deployment ready to serve
+# pages
+        livenessProbe:
+          failureThreshold: 18
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: 2368
+          timeoutSeconds: 1
+        readinessProbe:
+          failureThreshold: 1
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: 2368
+          timeoutSeconds: 1
+        startupProbe:
+          failureThreshold: 1
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: 2368
+          timeoutSeconds: 1

@@ -1,0 +1,28 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: example-com
+  annotations:
+    kubernetes.io/ingress.class: "nginx"    
+# The following line ensures that nginx will do redirection correctly
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
+    nginx.ingress.kubernetes.io/server-alias: www.example.com
+# This line ensures that we use the correct certificate issuer
+    cert-manager.io/issuer: "letsencrypt-prod"
+
+spec:
+  tls:
+  - hosts:
+    - example.com
+    - www.example.com
+    secretName: example-com-tls
+  rulesm:
+  - host: example.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: ghost-service
+          servicePort: 2368

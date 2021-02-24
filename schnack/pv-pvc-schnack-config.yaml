@@ -1,0 +1,35 @@
+# The Schnack docker image that I've defined require 2 persistent
+# volume mounts, 1 to store the data and the other one stores
+# the configuration. The user ID that is running Schnack must
+# have read-write access to the data and read access to the config
+# This example defines the data volume
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-schnack-config
+spec:
+  capacity:
+    storage: 10M
+  accessModes:
+    - ReadOnlyMany
+  glusterfs:
+    endpoints: glusterfs-cluster
+    path: /schnack/config
+    readOnly: true
+  persistentVolumeReclaimPolicy: Retain
+#  nfs:
+#    server: node.example.com
+#    path: "/exports/comments/config"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-schnack-config
+spec:
+  accessModes:
+    - ReadOnlyMany
+  storageClassName: ""
+  volumeName: pv-schnack-config
+  resources:
+    requests:
+      storage: 10M

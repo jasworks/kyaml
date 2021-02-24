@@ -1,0 +1,19 @@
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    email: somebody@example.com
+    privateKeySecretRef:
+      name: letsencrypt-prod-account-key
+    server: https://acme-v02.api.letsencrypt.org/directory
+# The below tells the cert-manager to use NGINX as ingress
+    solvers:
+    - http01:
+        ingress:
+          class: nginx

@@ -1,0 +1,72 @@
+# Deployment of schback image using
+# https://hub.docker.com/r/jasworks/schnack
+# There are 2 main tags - 
+# latest and
+# allplugins
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: schnack
+  labels:
+    app: schnack
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: schnack
+  template:
+    metadata:
+      labels:
+        app: schnack
+    spec:
+# The schnack instance will be ran as this user. It does not require
+# the user ID is being created in the node. You just need to make sure
+# the volumeMounts can write to it.
+      securityContext:
+        runAsUser: 12412
+        runAsGroup: 12412
+      volumes:
+      - name: pv-schnack-config
+        persistentVolumeClaim:
+          claimName: pvc-schnack-config
+      - name: pv-schnack-data
+        persistentVolumeClaim:
+          claimName: pvc-schnack-data
+      containers:
+      - name: schnack
+        image: jasworks/schnack:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3000
+        env:
+# The same user ID above also need to be set here.
+        - name: PUID
+          value: "12412"
+        - name: NODE_ENV
+          value: development
+        volumeMounts:
+        - mountPath: "/usr/src/app/config"
+          name: pv-schnack-config
+        - mountPath: "/usr/src/app/data"
+          name: pv-schnack-data
+        startupProbe:
+          httpGet:
+            path: /
+            port: 3000
+          failureThreshold: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          failureThreshold: 1 
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          failureThreshold: 1
+          periodSeconds: 10
+# This specify where the container should be run (on which node / nodes)
+#      nodeSelector:
+#        usage: server

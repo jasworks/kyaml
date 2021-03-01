@@ -1,0 +1,19 @@
+apiVersion: projectcalico.org/v3
+items:
+- apiVersion: projectcalico.org/v3
+  kind: IPPool
+  metadata:
+    creationTimestamp: "2021-02-28T02:23:34Z"
+    name: default-ipv4-ippool
+    resourceVersion: "40789"
+    uid: 73cea9f1-aad0-49d5-bf69-ef66a61ecf9d
+  spec:
+    blockSize: 26
+    cidr: 10.116.0.0/16
+    ipipMode: Never
+    natOutgoing: true
+    nodeSelector: all()
+    vxlanMode: CrossSubnet
+kind: IPPoolList
+metadata:
+  resourceVersion: "42051"

@@ -10,3 +10,5 @@ Once done, go to the terminal session and type STOP and press ENTER. It will kil
 A ssh tunnel can be created on your own machine through
 
 ssh -L 8001:localhost:8001 <master-node> "<path-to-script>/start.sh"
+  
+Please note that the file "user-tmpl.yaml" must be reside in the same folder as "start.sh", which will detect its presence automatically in a normal Linux master node.

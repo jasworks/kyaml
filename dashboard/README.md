@@ -8,4 +8,5 @@ If you use it together with a SSH tunnel, you can use your own browser to access
 Once done, go to the terminal session and type STOP and press ENTER. It will kill the proxy, and remove the temporary credentials.
 
 A ssh tunnel can be created on your own machine through
+
 ssh -L 8001:localhost:8001 <master-node> "<path-to-script>/start.sh"

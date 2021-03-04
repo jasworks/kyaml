@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: kubernetes-dashboard
+  name: dashboard-example-com
+  annotations:
+    kubernetes.io/ingress.class: "nginx"    
+# Backend is TLS enabled
+    nginx.ingress.kubernetes.io/backend-protocol: "https"
+# The following line ensures that nginx will do redirection correctly
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/whitelist-source-range: <IP range to be white listed, comma separated>
+# This line ensures that we use the correct certificate issuer
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+
+spec:
+  tls:
+  - hosts:
+    - dashboard.example.com
+    secretName: dashboard-example-com-tls
+  rules:
+  - host: dashboard.example.com
+    http:
+      paths:
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: kubernetes-dashboard
+            port:
+              number: 8443

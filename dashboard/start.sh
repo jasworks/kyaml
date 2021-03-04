@@ -19,12 +19,14 @@ echo "http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/http
 echo ""
 echo "and copy the token to the login window to access the dashboard"
 echo ""
-echo "Copy this token to your browser"
-echo "-------------------------------"
 echo -n "Press ENTER to continue..., or Control-C to break ..."
 read abc
 
+echo "Copy this token to your browser"
+echo "-------------------------------"
+echo ""
 kubectl -n kubernetes-dashboard get secret $(kubectl -n kubernetes-dashboard get sa/$USRNAME-dashboard-user -o jsonpath="{.secrets[0].name}") -o go-template="{{.data.token | base64decode}}"
+echo ""
 echo ""
 echo "-------------------------------"
 kubectl proxy 1> /dev/null 2> /dev/null &

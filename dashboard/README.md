@@ -12,3 +12,13 @@ A ssh tunnel can be created on your own machine through
 ssh -L 8001:localhost:8001 \<master-node\> "\<path-to-script\>/start.sh"
   
 Please note that the file "user-tmpl.yaml" must be reside in the same folder as "start.sh", which will detect its presence automatically in a normal Linux master node.
+
+Alternatively, you can define a SSL enabled ingress (sample provided in this folder) and create a permanent service account.
+
+Use the createuser.sh script to create a service account, and use the gettoken.sh to get the token.
+
+For guides on Ingress and SSL certificate auto-request and renewal, please visit my site:
+
+https://jasworks.org/making-your-kubernetes-service-ready-for-production-use-properly-exposed-to-internet-with-ssl-certificate-renewed-on-time/
+
+for details.
